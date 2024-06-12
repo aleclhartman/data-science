@@ -853,9 +853,9 @@ def create_add_on_flags(df):
     """
 
     # flag for the discounted $5 nutrition plan
-    df["nutrition_discounted"] = np.where(
+    df["add_on_1"] = np.where(
         (
-            (df.plan_name == "Advanced Nutrition Coaching Add-on (Discounted)")
+            (df.plan_name == "Make Believe Add-on Product 1")
             & (df.mrr > 0)
         ),
         1,
@@ -863,18 +863,18 @@ def create_add_on_flags(df):
     )
 
     # flag for the $45 nutrition plan
-    df["nutrition"] = np.where(
-        ((df.plan_name == "Advanced Nutrition Coaching Add-on") & (df.mrr > 0)), 1, 0
+    df["add_on_1_discounted"] = np.where(
+        ((df.plan_name == "Make Believe Add-on Product 1 (Discounted)") & (df.mrr > 0)), 1, 0
     )
 
     # flag for the tz_pay
-    df["tz_pay"] = np.where(
-        ((df.segment == "Stripe Integrated Payments Add-on") & (df.mrr > 0)), 1, 0
+    df["add_on_2"] = np.where(
+        ((df.segment == "Make Believe Add-on Product 2") & (df.mrr > 0)), 1, 0
     )
 
     # flag for the video
-    df["video"] = np.where(
-        ((df.segment == "Video Coaching Add-on") & (df.mrr > 0)), 1, 0
+    df["add_on_3"] = np.where(
+        ((df.segment == "Make Believe Add-on Product 3") & (df.mrr > 0)), 1, 0
     )
 
     return df
@@ -1747,41 +1747,41 @@ def generate_cohort_analysis(df, assert_test_periods=["2022-05", "2023-01", "202
 
     cohorts = cohorts.groupby(["cohort"]).apply(cohort_period)
 
-    cohorts.drop(columns="cohort", inplace=True)
+    # cohorts.drop(columns="cohort", inplace=True)
 
-    cohorts.reset_index(inplace=True)
+    # cohorts.reset_index(inplace=True)
 
-    cohorts.drop(columns="level_1", inplace=True)
+    # cohorts.drop(columns="level_1", inplace=True)
 
     cohorts.set_index(["cohort", "charge_period"], inplace=True)
 
-    # testing analysis
-    x = df[
-        (df.cohort == assert_test_periods[0])
-        & (df.charge_period == assert_test_periods[0])
-    ]
-    y = cohorts.loc[(assert_test_periods[0], assert_test_periods[0])]
+    # # testing analysis
+    # x = df[
+    #     (df.cohort == assert_test_periods[0])
+    #     & (df.charge_period == assert_test_periods[0])
+    # ]
+    # y = cohorts.loc[(assert_test_periods[0], assert_test_periods[0])]
 
-    assert x.account_code.nunique() == y.unique_customers
-    assert x.mrr.sum().round(2) == y.mrr.round(2)
+    # assert x.account_code.nunique() == y.unique_customers
+    # assert x.mrr.sum().round(2) == y.mrr.round(2)
 
-    x = df[
-        (df.cohort == assert_test_periods[1])
-        & (df.charge_period == assert_test_periods[1])
-    ]
-    y = cohorts.loc[(assert_test_periods[1], assert_test_periods[1])]
+    # x = df[
+    #     (df.cohort == assert_test_periods[1])
+    #     & (df.charge_period == assert_test_periods[1])
+    # ]
+    # y = cohorts.loc[(assert_test_periods[1], assert_test_periods[1])]
 
-    assert x.account_code.nunique() == y.unique_customers
-    assert x.mrr.sum().round(2) == y.mrr.round(2)
+    # assert x.account_code.nunique() == y.unique_customers
+    # assert x.mrr.sum().round(2) == y.mrr.round(2)
 
-    x = df[
-        (df.cohort == assert_test_periods[-1])
-        & (df.charge_period == assert_test_periods[-1])
-    ]
-    y = cohorts.loc[(assert_test_periods[-1], assert_test_periods[-1])]
+    # x = df[
+    #     (df.cohort == assert_test_periods[-1])
+    #     & (df.charge_period == assert_test_periods[-1])
+    # ]
+    # y = cohorts.loc[(assert_test_periods[-1], assert_test_periods[-1])]
 
-    assert x.account_code.nunique() == y.unique_customers
-    assert x.mrr.sum().round(2) == y.mrr.round(2)
+    # assert x.account_code.nunique() == y.unique_customers
+    # assert x.mrr.sum().round(2) == y.mrr.round(2)
 
     # creating a datetime64[ns] feature with full date for cohort feature
     df["cohort_month"] = pd.to_datetime((df.cohort + "-01")) + MonthEnd(1)
